@@ -1,0 +1,8 @@
+{
+    "name": "RemindMeBot",
+    "version": "1.0",
+    "description": "A bot for reminding you about things",
+    "main": "test.js",
+    "author": "TSP Group J",
+    "dependencies": {}
+}
