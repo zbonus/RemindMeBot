@@ -1,0 +1,12 @@
+{
+    "name": "RemindMeBot",
+    "version": "1.0",
+    "description": "A bot for reminding you about things",
+    "main": "test.js",
+    "author": "TSP Group J",
+    "dependencies": {
+        "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+        "discord.js": "^11.5.1",
+        "winston": "^3.2.1"
+    }
+}
