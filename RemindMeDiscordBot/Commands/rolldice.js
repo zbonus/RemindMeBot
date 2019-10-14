@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'diceroll',
+    name: 'rolldice',
     description: 'Choose random number between 0 and the given integer',
     args: true,
     usage: '<int>',

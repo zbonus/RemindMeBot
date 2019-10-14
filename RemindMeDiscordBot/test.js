@@ -49,7 +49,7 @@ client.on('message', message => {
   }
   catch (error) {
     console.error(error);
-    message.reply('Ya fucked up');
+    message.reply('Internal error');
   }
 
 });
