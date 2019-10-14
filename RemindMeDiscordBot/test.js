@@ -36,7 +36,6 @@ client.on('message', message => {
     }
   }
 
-
   if(command.args && !args.length) {
     let reply = 'You did not provide any arguments';
     if(command.usage) {
