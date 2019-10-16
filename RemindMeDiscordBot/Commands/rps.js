@@ -16,7 +16,6 @@ module.exports = {
         async function promptMessage(message, author, time, reactions) {
             time *= 1000;
             for(const reaction of reactions) await message.react(reaction);
-            message.react("🔫");
             const filter = (reaction, user) => reactions.includes(reaction.emoji.name) && user.id === author.id;
             return message.awaitReactions(filter, {max: 1, time: time}).then(collected => collected.first() && collected.first().emoji.name);
         }
@@ -28,9 +27,6 @@ module.exports = {
                 }
             else if(me === clientChose) {
                 return "We tied!";
-            }
-            else if(me === "🔫") {
-                return "Cheater";
             }
             else {
                 return "Haha I win";
