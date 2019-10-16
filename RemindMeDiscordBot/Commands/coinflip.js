@@ -1,7 +1,7 @@
 module.exports = {
     name: 'coinflip',
     description: 'Flips a coin',
-    execute(message, args) {
+    execute(client, message, args) {
         
         i = Math.floor(Math.random() * Math.floor(2));
         

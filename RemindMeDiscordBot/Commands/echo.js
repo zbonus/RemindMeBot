@@ -3,7 +3,7 @@ module.exports = {
     description: 'Repeats back whatever the user says.',
     args: true,
     usage: '<text>',
-    execute(message, args) {
+    execute(client, message, args) {
         text = '';
 
         for (let i = 0; i < args.length; i++) {

@@ -3,7 +3,7 @@ module.exports = {
     description: 'Information about the arg provided',
     args: true,
     usage: '<commandname>',
-    execute(message, args) {
+    execute(client, message, args) {
         message.channel.send(`Arguments: ${args}\nArguments length: ${args.length}`);
     }
 }

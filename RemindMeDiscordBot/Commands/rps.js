@@ -4,7 +4,7 @@ module.exports = {
     name: 'rps',
     description: 'Allows you to play rock-paper-scissors with the bot',
     args: false,
-    run: async(client, message, args) => {        
+    execute: async(client, message, args) => {        
         const msg = await message.channel.send("React below to play Rock Paper Scissors!");
         const reacted = await promptMessage(msg, message.author, 30, choices);
         const botchoice = choices[Math.floor(Math.random() * choices.length)];
