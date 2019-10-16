@@ -17,7 +17,7 @@ client.on('ready', () => {
   console.log('Logged in');
 });
 
-client.on('message', message => {
+client.on('message', async message => {
   console.log(message.content);
   if(!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -46,7 +46,7 @@ client.on('message', message => {
     return message.channel.send(reply);
   }
   try {
-    command.execute(message, args);
+    command.run(client, message, args);
   }
   catch (error) {
     console.error(error);
