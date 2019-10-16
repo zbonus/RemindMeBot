@@ -36,7 +36,6 @@ client.on('message', message => {
     }
   }
 
-
   if(command.args && !args.length) {
     let reply = 'You did not provide any arguments';
     if(command.usage) {
@@ -50,7 +49,7 @@ client.on('message', message => {
   }
   catch (error) {
     console.error(error);
-    message.reply('Ya fucked up');
+    message.reply('Internal error');
   }
 
 });
