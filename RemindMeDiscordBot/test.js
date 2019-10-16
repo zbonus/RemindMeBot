@@ -46,11 +46,12 @@ client.on('message', async message => {
     return message.channel.send(reply);
   }
   try {
+    command.execute(message, args);
     command.run(client, message, args);
   }
   catch (error) {
     console.error(error);
-    message.reply('Ya fucked up');
+    message.reply('Internal Error');
   }
 
 });

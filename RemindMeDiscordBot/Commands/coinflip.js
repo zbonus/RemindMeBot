@@ -1,7 +1,17 @@
 module.exports = {
     name: 'coinflip',
-    description: 'its in the name',
+    description: 'Flips a coin',
     execute(message, args) {
-        message.channel.send('Heads');  
+        
+        i = Math.floor(Math.random() * Math.floor(2));
+        
+        if (i == 0) {
+            message.reply('Heads');
+        }
+
+        if (i == 1) {
+            message.reply('Tails');
+        }       
+
     },
 };
