@@ -29,7 +29,6 @@ for(const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-
 client.on('ready', () => {
   console.log('Logged in');
 });
