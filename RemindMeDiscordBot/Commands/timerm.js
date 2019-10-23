@@ -20,7 +20,7 @@ function timerdone(client , message, arg)
 {
     if (arg == 1)
     {
-        message.reply('1 minute has passed');
+        message.reply('1 minute has passed.');
     }
     else
     {
