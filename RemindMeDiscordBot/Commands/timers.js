@@ -1,0 +1,22 @@
+module.exports = {
+    name: 'timers',
+    description: 'pings user after a certain time interval in seconds.',
+    args: true,
+    usage: '<time interval (seconds)>',
+    execute(client, message, args) {
+        if (isNaN(args[0]))
+        {
+            message.channel.send('Please input a decimal number.');
+        }
+        else
+        {
+            msecs = args[0] * 1000;
+            setTimeout(timerdone, `${msecs}`, client,  message, args[0]);
+        }
+    },
+};
+
+function timerdone(client , message, arg)
+{
+    message.reply(`${arg} seconds have passed.`);
+}
