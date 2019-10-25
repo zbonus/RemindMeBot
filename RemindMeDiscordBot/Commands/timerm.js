@@ -18,7 +18,11 @@ module.exports = {
 
 function timerdone(client , message, arg)
 {
-    if (arg == 1)
+    if (arg <= 0)    
+    {
+        message.reply('please enter a positive number.');
+    }
+    else if (arg == 1)
     {
         message.reply('1 minute has passed.');
     }
