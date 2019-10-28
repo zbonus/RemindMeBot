@@ -3,6 +3,6 @@ module.exports = {
     description: 'You\'re welcome Walker 😃',
     args: false,
     execute(client, message, args) {
-        message.channel.send({files: ['/god.jpg']});
+        message.channel.send({files: ['./god.jpg']});
     }
 }
