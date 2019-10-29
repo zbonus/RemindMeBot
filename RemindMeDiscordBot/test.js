@@ -1,20 +1,3 @@
-// mysql connection info
-// const mysql = require("mysql");
-
-// var con = mysql.createConnection({
-//        host: "localhost",
-//        user: "root",
-//        password: "root",
-//        database: "test"
-// });
-
-// con.connect(err => {
-//     if(err) throw err;
-//     console.log("Connected To Database!");
-//     con.query("SHOW TABLES", console.log);
-
-// });
-
 const fs = require('fs');
 const Discord = require('discord.js');
 const {prefix, token} = require("./config.json");
