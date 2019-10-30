@@ -1,0 +1,10 @@
+For the table "id":
+	create tab;e id(react_id int(11) auto_increment, user_id varchar(18), primary key(react_id, user_id));
+
+For the table "single":
+	create table single(react_id int(11) auto_increment, foreign key(react_id) references id(react_id), user_id varchar(18), primary key(react_id, user_id), dateNtime date, message varchar(100));
+	alter table single add foreign key (react_id) references id(react_id);
+
+For the table "multiple":
+	create table multiple(react_id int(11) auto_increment, foreign key(react_id) references id(react_id), user_id varchar(18), primary key(react_id, user_id), dateNtime date, channel_id varchar(18), server_id varchar(18), group_id varchar(18), message varchar(100));
+	alter table multiple add foreign key (react_id) references id(react_id);
