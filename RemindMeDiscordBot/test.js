@@ -1,3 +1,20 @@
+// mysql connection info
+// const mysql = require("mysql");
+
+// var con = mysql.createConnection({
+//        host: "localhost",
+//        user: "root",
+//        password: "root",
+//        database: "test"
+// });
+
+// con.connect(err => {
+//     if(err) throw err;
+//     console.log("Connected To Database!");
+//     con.query("SHOW TABLES", console.log);
+
+// });
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const {prefix, token} = require("./config.json");
@@ -14,6 +31,7 @@ for(const file of commandFiles) {
 
 client.on('ready', () => {
   console.log('Logged in');
+  setInterval(testfunc, 5000)
 });
 
 client.on('message', async message => {
@@ -58,5 +76,10 @@ client.on('message', async message => {
   }
 
 });
+
+function testfunc()
+{
+  console.log("test interval");
+}
 
 client.login(token);
