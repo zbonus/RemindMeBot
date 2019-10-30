@@ -22,11 +22,21 @@ module.exports = {
         connection.query(str, function (error, results, fields) {
             if(error) {
                 console.log(error);
+                message.reply("Database error")
                 return;
             }
-            var rows = JSON.parse(JSON.stringify(results[0]));
+
+            var outStr = "";
+            results.forEach(function(item) {
+                outStr += `At ${item.dateNtime}: ${item.message}\n`;
+            });
             
-            message.channel.send(rows.message);
+            message.author.send(`${results.length} reminders for ${"<@" + message.author.id + ">"}`);
+            const Discord = require('discord.js');
+            const embeddedLayout = new Discord.RichEmbed()
+                .setColor('#0099ff')
+                .setDescription(outStr)
+            message.author.send(embeddedLayout);
         });
     }
 }
