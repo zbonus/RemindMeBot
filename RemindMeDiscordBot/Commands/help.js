@@ -3,6 +3,7 @@ module.exports = {
     description: 'Displays information for every possible command',
     args: false,
     execute(client, message, args) {
+        message.channel.send("It looks like you're having problems using the bot. Would you like some help?\n");
         const fs = require('fs');
 
         const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -14,10 +15,10 @@ module.exports = {
         }
 
         const Discord = require('discord.js');
-        const exampleEmbed = new Discord.RichEmbed()
+        const embeddedLayout = new Discord.RichEmbed()
             .setColor('#0099ff')
             .setTitle('Help')
             .setDescription(`${outStr}`)
-        message.channel.send(exampleEmbed);
+        message.channel.send(embeddedLayout);
     }
 }
