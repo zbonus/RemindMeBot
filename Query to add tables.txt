@@ -2,7 +2,7 @@ For the TABLE "id":
 	CREATE TABLE id(react_id int(11) auto_increment, user_id varchar(18), PRIMARY KEY(react_id, user_id));
 
 For the TABLE "single":
-	CREATE TABLE single(react_id int(11) auto_increment, FOREIGN KEY(react_id) REFERENCES id(react_id), user_id varchar(18), PRIMARY KEY(react_id, user_id), dateNtime date, message varchar(100));
+	CREATE TABLE single(react_id int(11) auto_increment, FOREIGN KEY(react_id) REFERENCES id(react_id), user_id varchar(18), PRIMARY KEY(react_id, user_id), dateNtime datetime, message varchar(100));
 	ALTER TABLE single ADD FOREIGN KEY (react_id) REFERENCES id(react_id);
 
 For the TABLE "multiple":
