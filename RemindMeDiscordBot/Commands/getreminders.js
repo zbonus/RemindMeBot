@@ -15,10 +15,7 @@ module.exports = {
             if(err) throw err;
         });
         
-        // make edge case for undefined
-        console.log("Connected To Database!");
         var str = "SELECT * FROM single WHERE user_id = " + `${message.author.id}`;
-        console.log(str);
         connection.query(str, function (error, results, fields) {
             if(error) {
                 console.log(error);
@@ -31,12 +28,15 @@ module.exports = {
                 outStr += `At ${item.dateNtime}: ${item.message}\n`;
             });
             
-            message.author.send(`${results.length} reminders for ${"<@" + message.author.id + ">"}`);
-            const Discord = require('discord.js');
-            const embeddedLayout = new Discord.RichEmbed()
-                .setColor('#0099ff')
-                .setDescription(outStr)
-            message.author.send(embeddedLayout);
+            message.channel.send(`Message sent to <@${message.author.id}>`)
+            message.author.send(`You have ${results.length} reminders`);
+            if (results.length != 0) {
+                const Discord = require('discord.js');
+                const embeddedLayout = new Discord.RichEmbed()
+                    .setColor('#0099ff')
+                    .setDescription(outStr)
+                message.author.send(embeddedLayout);
+            }
         });
     }
 }
