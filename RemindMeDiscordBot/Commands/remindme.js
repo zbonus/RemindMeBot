@@ -33,7 +33,7 @@ module.exports = {
         if(reminder.length == 3) {
             if(timeRegex.test(reminder[1])) {
                 time = 1;
-                datesplite = datesplit.split(":");
+                datesplit = datesplit.split(":");
                 console.log(datesplit);
                 if(datesplit[0] < hour) {
                     time = 2;
