@@ -1,5 +1,7 @@
 module.exports = {
     name: 'getreminders',
+    description: 'Get your active reminders private messaged to yourself',
+    args: false,
     execute(client, message, args) {
         const mysql = require("mysql");
 
@@ -28,7 +30,7 @@ module.exports = {
                 outStr += `At ${item.dateNtime}: ${item.message}\n`;
             });
             
-            message.channel.send(`Message sent to <@${message.author.id}>`)
+            message.channel.send(`Message sent to <@${message.author.id}>`);
             message.author.send(`You have ${results.length} reminders`);
             if (results.length != 0) {
                 const Discord = require('discord.js');
