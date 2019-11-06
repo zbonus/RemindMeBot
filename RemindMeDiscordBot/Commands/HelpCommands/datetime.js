@@ -13,7 +13,7 @@ module.exports = {
         if (date.length == 3 && time.length == 2)
         {
             dt = `${date[2]}-${date[0]}-${date[1]} ${time[0]}:${time[1]}:00`;
-            console.log(`datetime: reminder datetime = ${datetime}`);
+            console.log(`datetime: reminder datetime = ${dt}`);
         }
         else
         {
@@ -46,7 +46,7 @@ module.exports = {
         if (date.length == 3 && time == 0)
         {
             dt = `${date[2]}-${date[0]}-${date[1]} ${hour}:${minute}:00`;
-            console.log(`date: reminder datetime = ${datetime}`);
+            console.log(`date: reminder datetime = ${dt}`);
         }
         else
         {
@@ -79,7 +79,7 @@ module.exports = {
         if (date == 0 && time.length == 2)
         {
             dt = `${year}-${month}-${day} ${time[0]}:${time[1]}:00`;
-            console.log(`time: reminder datetime = ${datetime}`);
+            console.log(`time: reminder datetime = ${dt}`);
         }
         else
         {
