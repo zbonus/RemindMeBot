@@ -20,7 +20,7 @@ module.exports = {
             console.log(`datetime: error in date/time ${date}/${time}`);
         }
 
-        statement = `insert into ${commandName} (id, date/time, text) values ('${userID}', '${dt}', '${text}');`;
+        statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
         console.log(statement);
 
         if (dt == '')
@@ -53,7 +53,7 @@ module.exports = {
             console.log(`date: error in date/time ${date}/${time}`);
         }
         
-        statement = `insert into ${commandName} (id, date/time, text) values ('${userID}', '${dt}', '${text}');`;
+        statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
         console.log(statement);
 
         if (dt == '')
@@ -86,7 +86,7 @@ module.exports = {
             console.log(`time: error in date/time ${date}/${time}`);
         }
         
-        statement = `insert into ${commandName} (id, date/time, text) values ('${userID}', '${dt}', '${text}');`;
+        statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
         console.log(statement);
 
         if (dt == '')
