@@ -42,21 +42,29 @@ module.exports = {
             }
         }
         if(reminder.length == 4) {
-            timeTest(reminder[1]);
-            if(time == 1) {
-                dateTest(reminder[2]);
-                if(date == 1) {
+            dateTest(reminder[1]);
+            if(date >= 1) {
+                timesplit = reminder[2];
+                timeTest(reminder[2]);
+                if(time >= 1) {
                     both = 1;
+                    if(month == datesplit[0] && day == datesplit[1] && year == datesplit[2]) {
+                        if(time == 1) {
+                            date = 1;
+                        }
+                    }
+                    else if(hour <= timesplit[0] && minute <= timesplit[1]) {
+                        if(date == 1) {
+                            time == 1;
+                        }
+                    }
                 }
             }
             else {
-                timesplit = reminder[2];
-                dateTest(reminder[1]);
-                if(date == 1) {
-                    timeTest(reminder[2]);
-                    if(time == 1) {
-                        both = 1;
-                    }
+                timesplit = reminder[1];
+                timeTest(reminder[1]);
+                if(time == 1) {
+                    both = 2;
                 }
             }
         }
@@ -72,6 +80,10 @@ module.exports = {
             message.channel.send("Improper date given!");
             message.channel.send("Make sure that your date entered is after today's date if no time is given!");
             message.channel.send("For example today's date:\`" + month + '/' + day + '/' + year + "\` is not valid by itself, but is valid if a time is given later than the current time.");
+        }
+        if(both == 2) {
+            message.channel.send("Improper format!");
+            message.channel.send("Make sure the time comes AFTER the date!");
         }
         else if(both == 1) {
             message.channel.send("Called date and time");
