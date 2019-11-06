@@ -1,4 +1,6 @@
-
+const { datetime } = require("./HelpCommands/datetime.js");
+const { date } = require("./HelpCommands/datetime.js");
+const { time } = require("./HelpCommands/datetime.js");
 module.exports = {
     name: 'remindme',
     description: 'Reminds the user of a given event at a given time',
@@ -9,15 +11,27 @@ module.exports = {
         // Splits the command from the reaction message. The reaction message is stored in msg[1]
         const msg = message.content.split("\"");
 
-        // Splits the command info off from the command itself and stores it in reminder[1]
+        /* 
+        *  Splits the command info off from the command itself and stores it in reminder[1]
+        *  Formatted like:
+        *  reminder = {<commandname>, <date or time>, <time>, <empty string>}
+        */
+
         const reminder = msg[0].split(" ");
 
+        // Stores the date information into two corresponding variables.
         var datesplit = reminder[1];
         var timesplit = reminder[1];
+
         console.log(msg);
         console.log(reminder);
+
+        // Regexes to check if the formatting is correct for dates and times
+
         const timeRegex = /^(([2]{1}[0-3]{1}:{1})|([0-1]?[0-9]{1}:{1}))([0-5]{1}[0-9]{1})$/
         const dateRegex = /^((1|01|3|03|5|05|7|07|8|08|10|12){1}(-|\/){1}(([1-2]{1}[0-9]{1})|(0?[1-9]{1})|(3{1}[0-1]{1}))(-|\/){1}([2-9]{1}[0-9]{1}[0-9]{1}[0-9]))|((4|04|6|06|9|09|11){1}(-|\/){1}(([1-2]{1}[0-9]{1})|(0?[1-9]{1})|(3{1}0{1}))(-|\/){1}([2-9]{1}[0-9]{1}[0-9]{1}[0-9]))|((2|02){1}(-|\/){1}(([1-2]{1}[0-9]{1})|(0?[1-9]{1})|)(-|\/){1}([2-9]{1}[0-9]{1}[0-9]{1}[0-9]))$/
+
+        // Stores todays date information in corresponding variables
 
         var today = new Date();
         var day = today.getDate();
@@ -28,13 +42,13 @@ module.exports = {
         console.log(day);
         console.log(month);
         console.log(year);
-        var time = 0;
-        var date = 0;
+        var timebool = 0;
+        var datebool = 0;
         var both = 0;
-        var i = 0;
+        var statement;
         if(reminder.length == 3) {
             timeTest(reminder[1]);
-            if(time > 0) {
+            if(timebool > 0) {
 
             }
             else {
@@ -43,19 +57,19 @@ module.exports = {
         }
         if(reminder.length == 4) {
             dateTest(reminder[1]);
-            if(date >= 1) {
+            if(datebool >= 1) {
                 timesplit = reminder[2];
                 timeTest(reminder[2]);
-                if(time >= 1) {
+                if(timebool >= 1) {
                     both = 1;
                     if(month == datesplit[0] && day == datesplit[1] && year == datesplit[2]) {
-                        if(time == 1) {
-                            date = 1;
+                        if(timebool == 1) {
+                            datebool = 1;
                         }
                     }
                     else if(hour <= timesplit[0] && minute <= timesplit[1]) {
-                        if(date == 1) {
-                            time == 1;
+                        if(datebool == 1) {
+                            timebool == 1;
                         }
                     }
                 }
@@ -63,7 +77,7 @@ module.exports = {
             else {
                 timesplit = reminder[1];
                 timeTest(reminder[1]);
-                if(time == 1) {
+                if(timebool == 1) {
                     both = 2;
                 }
             }
@@ -71,12 +85,12 @@ module.exports = {
         else {
             
         }
-        if(time == 2) {
+        if(timebool == 2) {
             message.channel.send("Improper Time given!");
             message.channel.send("Make sure that your time entered is after the current time if no date is given!");
             message.channel.send("For example the current time for me is:\`" + hour + ':' + minute + "\` is not valid by itself, but is valid if a date is given later than today's date.");
         }
-        if (date == 2) {
+        if (datebool == 2) {
             message.channel.send("Improper date given!");
             message.channel.send("Make sure that your date entered is after today's date if no time is given!");
             message.channel.send("For example today's date:\`" + month + '/' + day + '/' + year + "\` is not valid by itself, but is valid if a time is given later than the current time.");
@@ -86,16 +100,16 @@ module.exports = {
             message.channel.send("Make sure the time comes AFTER the date!");
         }
         else if(both == 1) {
+            statement = datetime(reminder[0], datesplit, timesplit, msg[1], message.author);
             message.channel.send("Called date and time");
         }
-        else if (date == 1) {
-            //Call date
-            //debug
+        else if (datebool == 1) {
+            statement = date(reminder[0], datesplit, 0, msg[1], message.author);
+            console.log(statement);
             message.channel.send("Called date command!");
         }
-        else if (time == 1) {
-            //Call time
-            //debug
+        else if (timebool == 1) {
+            statement = time(reminder[0], 0, timesplit, msg[1], message.author);
             message.channel.send("Called time command!");
         }
         else {
@@ -116,18 +130,18 @@ module.exports = {
                 .addField("Time:", timesplit[0] + ':' + timesplit[1], true);
             message.channel.send(exampleEmbed);
         }
-        else if(date == 1 || time == 1) {
+        else if(datebool == 1 || timebool == 1) {
             const exampleEmbed = new Discord.RichEmbed()
                 .setColor('#0099ff')
                 .setTitle("Reminder created!")
                 .setAuthor(message.author.username + "'s reminder", message.author.avatarURL)
                 .setThumbnail("https://cdn.vox-cdn.com/thumbor/PnCzeDLvefGL_DYVk4TlxTLhNkQ=/0x0:1062x705/1200x800/filters:focal(447x269:615x437)/cdn.vox-cdn.com/uploads/chorus_image/image/63280536/clippy.0.jpg")
                 .setDescription(msg[1]);
-            if(date == 1) {
+            if(datebool == 1) {
                 exampleEmbed.addField("Date:", reminder[1], true);
                 exampleEmbed.addField("Time:", hour + ':' + String(minute).padStart(2, '0'), true);
             }
-            if(time == 1) {
+            if(timebool == 1) {
                 exampleEmbed.addField("Date:", month + '/' + day + '/' + year, true);
                 exampleEmbed.addField("Time:", reminder[1], true);
             }
@@ -137,21 +151,21 @@ module.exports = {
         
         function timeTest(time_str) {
             if(timeRegex.test(time_str)) {
-                time = 1;
+                timebool = 1;
                 timesplit = timesplit.split(":");
                 console.log(timesplit);
-                if(date == 1) {
-                    time = 1;
+                if(datebool == 1) {
+                    timebool = 1;
                 }
                 else if(timesplit[0] < hour) {
-                    time = 2;
+                    timebool = 2;
                 }
                 else if(timesplit[0] == hour) {
                     if(timesplit[1] < minute) {
-                        time = 2;
+                        timebool = 2;
                     }
                     else if(timesplit[1] == minute) {
-                        time = 2;
+                        timebool = 2;
                     }
                 }
                 if(timesplit[0].length == 1) {
@@ -161,30 +175,30 @@ module.exports = {
         }
         function dateTest(date_str) {
             if(dateRegex.test(date_str)) {
-                date = 1;
+                datebool = 1;
                 datesplit = datesplit.replace(/\//g, "-");
                 datesplit = datesplit.split("-");
                 console.log(datesplit);
-                if(time == 1) {
-                    date = 1;
+                if(timebool == 1) {
+                    datebool = 1;
                 }
                 else if(datesplit[2] < year) {
-                    date = 2;
+                    datebool = 2;
                     console.log("Year fail");
                 }
                 else if(datesplit[2] == year) {
                     if(datesplit[0] < month) {
-                        date = 2;
+                        datebool = 2;
                         console.log("month fail");
                     }
                     else if(datesplit[0] == month) {
                         if(datesplit[1] < day) {
-                            date = 2;
+                            datebool = 2;
                             console.log("day fail");
 
                         } 
                         else if(datesplit[1] == day) {
-                            date = 2;
+                            datebool = 2;
                         }
                     }
                 }
