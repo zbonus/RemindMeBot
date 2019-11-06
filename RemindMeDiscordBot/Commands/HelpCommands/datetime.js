@@ -1,6 +1,6 @@
 module.exports = {
 
-    datetime: function(commandName, date, time, text, userID, reactID)
+    datetime: function(commandName, date, time, text, userID)
     {
         // get current date and time
         var today = new Date();
@@ -32,7 +32,7 @@ module.exports = {
         }
 
         // prepare the mysql statement with given input for the 'single' table
-        statement = `insert into single (user_id, dateNtime, message, react_id) values ('${userID}', '${dt}', '${text}', '${reactID}');`;
+        statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
         console.log(`datetime: statement = ${statement}`);
 
         if (dt == '')
