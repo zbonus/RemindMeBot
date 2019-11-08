@@ -4,6 +4,17 @@ For the TABLE "id":
 For the TABLE "single":
 	CREATE TABLE single(react_id int(11) auto_increment, FOREIGN KEY(react_id) REFERENCES id(react_id), user_id varchar(18), PRIMARY KEY(react_id, user_id), dateNtime datetime, message varchar(100));
 	ALTER TABLE single ADD FOREIGN KEY (react_id) REFERENCES id(react_id);
+	
+	USE teamclippy;
+	DELIMITER //
+
+	CREATE TRIGGER before_update_single BEFORE INSERT ON single FOR EACH ROW
+	BEGIN
+		DECLARE rID int;
+		INSERT INTO id(user_id) VALUES(NEW.user_id);
+		SELECT LAST_INSERT_ID() INTO rID;
+		SET NEW.react_id = rID;
+	END;//
 
 For the TABLE "multiple":
 	CREATE TABLE multiple(react_id int(11) auto_increment, FOREIGN KEY(react_id) REFERENCES id(react_id), user_id varchar(18), PRIMARY KEY(react_id, user_id), dateNtime date, channel_id varchar(18), server_id varchar(18), group_id varchar(18), message varchar(100));
