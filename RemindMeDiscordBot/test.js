@@ -83,7 +83,7 @@ client.on('message', async message => {
 
 var pinged = false;
 function pingDB() {
-  var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), "300")`;
+  var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), "60")`;
   dbConn.query(sql, function (error, results) {
     dbConn.printQueryResults(sql, results);
   });
