@@ -1,20 +1,6 @@
 module.exports = {
     name: 'dbtest',
-    execute(client, message, args) {
-        const mysql = require("mysql");
-
-        var connection = mysql.createConnection({
-            host: "classdb.it.mtu.edu",
-            user: "teamclippy_rw",
-            password: "tClippy!",
-            database: "teamclippy",
-            port: 3307
-        });
-
-        connection.connect(err => {
-            if(err) throw err;
-        });
-
+    execute(client, message, args, dbConn) {
         function printQueryResults(sql, results) {
             console.log(sql);
             results.forEach(function (item) {
@@ -25,7 +11,7 @@ module.exports = {
         var test1passed = false;
         //TODO: insert call to !remindme 12/20/2019 23:59 "End of fall semester"
         var sql = `SELECT * FROM single WHERE user_id = '${message.author.id}'`;
-        connection.query(sql, function (error, results, fields) {
+        dbConn.query(sql, function (error, results, fields) {
             if (results.length == 1 && !error) {
                 message.channel.send("Database Test 1: Passed");
                 printQueryResults(sql, results);
@@ -43,7 +29,7 @@ module.exports = {
 
         if (test1passed) {
             sql = `DELETE FROM single WHERE user_id = '${message.author.id}'`;
-            connection.query(sql);
+            dbConn.query(sql);
         }
     }
 }

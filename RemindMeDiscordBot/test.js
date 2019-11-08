@@ -7,6 +7,20 @@ client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
+const mysql = require("mysql");
+
+var dbConn = mysql.createConnection({
+    host: "classdb.it.mtu.edu",
+    user: "teamclippy_rw",
+    password: "tClippy!",
+    database: "teamclippy",
+    port: 3307
+});
+
+dbConn.connect(err => {
+    if(err) throw err;
+});
+
 for(const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
@@ -14,7 +28,7 @@ for(const file of commandFiles) {
 
 client.on('ready', () => {
   console.log('Logged in');
-  setInterval(testfunc, 5000)
+  setInterval(pingDB, 5000)
 });
 
 client.on('message', async message => {
@@ -51,7 +65,7 @@ client.on('message', async message => {
     return message.channel.send(reply);
   }
   try {
-    command.execute(client, message, args);
+    command.execute(client, message, args, dbConn);
   }
   catch (error) {
     console.error(error);
@@ -60,8 +74,9 @@ client.on('message', async message => {
 
 });
 
-function testfunc() {
-  //console.log("test interval");
+var pinged = false;
+function pingDB() {
+  
 }
 
 client.login(token);
