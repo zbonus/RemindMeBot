@@ -30,8 +30,8 @@ module.exports = {
         {
             console.log(`datetime: error in date/time ${date}/${time}`);
         }
-
-        userID = userID.substring(2,20);
+        
+        userID = String(userID).substring(2,20);
         // prepare the mysql statement with given input for the 'single' table
         statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
         console.log(`datetime: statement = ${statement}`);

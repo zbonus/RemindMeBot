@@ -5,19 +5,8 @@ module.exports = {
     description: 'Reminds the user of a given event at a given time',
     usage: '<Date (MM-DD-YYYY) and/or Time(Must be in Military Time HH:MM)> <"reminder"> OR \n!remindme <Number greater than zero> <date type(minute, hour, day, week, month, year)> <"reminder">',
     args: true,
-    execute: async(client, message, args) => {        
+    execute: async(client, message, args, dbConn) => {        
         const mysql = require("mysql");
-        var connection = mysql.createConnection({
-            host: "classdb.it.mtu.edu",
-            user: "teamclippy_rw",
-            password: "tClippy!",
-            database: "teamclippy",
-            port: 3307
-        });
-
-        connection.connect(err => {
-            if(err) throw err;
-        });
 
         // Splits the command from the reaction message. The reaction message is stored in msg[1]
         const msg = message.content.split("\"");
@@ -279,7 +268,7 @@ module.exports = {
             message.channel.send(exampleEmbed);
         }
 
-        connection.query(statement, function (error) {
+        dbConn.query(statement, function (error) {
             if(error) {
                 console.log(error);
                 message.reply("Database error")
