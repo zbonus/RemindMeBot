@@ -57,13 +57,19 @@ module.exports = {
         // Check to make sure the time and date are properly formatted. If time fails, it will then check date.
 
         if(reminder.length == 3) {
-            timeTest(reminder[1]);
-            if(timebool > 0) {
+            if(reminder[2].length != 0) {
+                console.log("error");
+            }
+            else if (reminder[2] === '') {
+                timeTest(reminder[1]);
+                if(timebool > 0) {
 
+                }
+                else {
+                    dateTest(reminder[1]);
+                }
             }
-            else {
-                dateTest(reminder[1]);
-            }
+            
         }
 
         // Checks if both date and time have been inputted. If date is greater than 1 it will continue
