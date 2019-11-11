@@ -27,7 +27,7 @@ module.exports = {
 
             var outStr = "";
             results.forEach(function(item) {
-                outStr += `At ${item.dateNtime}: ${item.message}\n`;
+                outStr += `At ${item.dateNtime}: ${item.message}\nID: ${item.react_id} Table: single\n`;
             });
             
             message.channel.send(`Message sent to <@${message.author.id}>`);
