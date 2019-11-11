@@ -17,7 +17,7 @@ var dbConn = mysql.createConnection({
 });
 
 dbConn.connect(err => {
-    if(err) throw err;
+    if (err) throw err;
 });
 
 dbConn.printQueryResults = function (sql, results) {
@@ -27,7 +27,9 @@ dbConn.printQueryResults = function (sql, results) {
     });
 };
 
-for(const file of commandFiles) {
+var pendingReminders = [];
+
+for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
 }
@@ -35,26 +37,25 @@ for(const file of commandFiles) {
 client.on('ready', () => {
   console.log('Logged in');
   pingDB();
-  setInterval(pingDB, 300000);
+  setInterval(pingDB, 60000);
 });
 
 client.on('message', async message => {
   console.log(message.content);
-  if(!message.content.startsWith(prefix) || message.author.bot) {
-    if(message.author.id === "633350865356587008");
-    else {
+  if (!message.content.startsWith(prefix) || message.author.bot) {
+    if (!(message.author.id === "633350865356587008")) {
       return;
     }      
   }
 
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
-  if(!client.commands.has(commandName)) return;
+  if (!client.commands.has(commandName)) return;
   const command = client.commands.get(commandName);
 
-  if(commandName === 'info') {
+  if (commandName === 'info') {
     const information = client.commands.get(args[0]);
-    if(!args.length || !client.commands.has(args[0])) {
+    if (!args.length || !client.commands.has(args[0])) {
       return message.channel.send('You didn\'t provide a command or the command does not exist');
     }
     else {
@@ -63,9 +64,9 @@ client.on('message', async message => {
   }
 
 
-  if(command.args && !args.length) {
+  if (command.args && !args.length) {
     let reply = 'You did not provide any arguments';
-    if(command.usage) {
+    if (command.usage) {
       reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
     }
 
@@ -81,11 +82,23 @@ client.on('message', async message => {
 
 });
 
-var pinged = false;
+function triggerReminder(reactID, userID, dateNtime, message) {
+  var user = client.users.get(userID);
+  user.sendMessage(`Reminder at ${dateNtime}: ${message}`);
+  var sql = `DELETE FROM single WHERE react_id = ${reactID}`;
+  console.log(sql);
+  dbConn.query(sql, function(item) {});
+}
+
 function pingDB() {
-  var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), "60")`;
+  var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), '0 0:01:00.00')`;
   dbConn.query(sql, function (error, results) {
-    dbConn.printQueryResults(sql, results);
+    results.forEach(function(item) {
+      console.log(item["dateNtime"].toString());
+      var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
+      setTimeout(triggerReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["message"]), timeRemaining);
+    });
+    console.log(`${results.length} pending reminders within the next 60 seconds`);
   });
 }
 
