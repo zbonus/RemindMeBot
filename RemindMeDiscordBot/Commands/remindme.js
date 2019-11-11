@@ -1,5 +1,5 @@
 const { datetime } = require("./HelpCommands/datetime.js");
-//const { datetype } = require("./HelpCommands/datetype.js");
+const { datetype } = require("./HelpCommands/datetype.js");
 module.exports = {
     name: 'remindme',
     description: 'Reminds the user of a given event at a given time',
@@ -169,7 +169,7 @@ module.exports = {
             message.channel.send("Called time command!");
         }
         else if (valbool == 1) {
-           // statement = datetype(reminder[0], reminder[1], datetype, msg[1], message.author);
+            statement = datetype(reminder[0], reminder[1], timetype, msg[1], message.author);
             message.channel.send("Called value command!");
         }
         else {
