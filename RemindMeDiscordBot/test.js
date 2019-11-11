@@ -1,13 +1,12 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const {prefix, token} = require("./config.json");
+const mysql = require('mysql');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-const mysql = require("mysql");
 
 var dbConn = mysql.createConnection({
     host: "classdb.it.mtu.edu",
@@ -21,6 +20,13 @@ dbConn.connect(err => {
     if(err) throw err;
 });
 
+dbConn.printQueryResults = function (sql, results) {
+    console.log(sql);
+    results.forEach(function (item) {
+        console.log(`${item.user_id} ${item.react_id} ${item.message}`);
+    });
+};
+
 for(const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
@@ -28,7 +34,8 @@ for(const file of commandFiles) {
 
 client.on('ready', () => {
   console.log('Logged in');
-  setInterval(pingDB, 5000)
+  pingDB();
+  setInterval(pingDB, 300000);
 });
 
 client.on('message', async message => {
@@ -76,7 +83,10 @@ client.on('message', async message => {
 
 var pinged = false;
 function pingDB() {
-  
+  var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), "60")`;
+  dbConn.query(sql, function (error, results) {
+    dbConn.printQueryResults(sql, results);
+  });
 }
 
 client.login(token);
