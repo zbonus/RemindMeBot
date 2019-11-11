@@ -16,6 +16,7 @@ module.exports = {
         else {
             message.channel.send("Error! Incorrect table name!");
         }
+        var success = 0;
         dbConn.query(query, function(error) {
             if(error) {
                 console.log(error);
@@ -23,8 +24,21 @@ module.exports = {
                 return;
             }
             else {
+                success = 1;
                 message.channel.send("Reminder successfully deleted!");
             }  
-        })
+        });
+        query = "DELETE FROM id WHERE react_id = " + `${reactid[1]}` + " AND user_id = " + `${message.author.id}`;
+        
+        if(success == 1) {
+            console.log(success);
+            dbConn.query(query, function(error) {
+                if(error) {
+                    console.log(error);
+                    message.channel.send("DB Error");
+                    return;
+                }
+            });
+        }
     }
 }
