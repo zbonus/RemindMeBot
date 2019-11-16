@@ -1,3 +1,11 @@
+process.on('uncaughtException', err => {
+  console.error("", err);
+  globalMsg.channel.send("An uncaught exception has occurred. Please report this problem to the developers and any details about what you did that caused this error.\n" +
+    `Error: ${err.name}\n` + `Message: ${err.message}\n`);
+  globalMsg = null;
+  console.log("An uncaught exception was detected. See details above.");
+});
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const {prefix, token} = require("./config.json");
@@ -17,7 +25,11 @@ var dbConn = mysql.createConnection({
 });
 
 dbConn.connect(err => {
-    if (err) throw err;
+    if (err) {
+      console.error("", err);
+      console.log("There was a problem connecting to the database. The bot has terminated.");
+      process.exit(2);
+    }
 });
 
 dbConn.printQueryResults = function (sql, results) {
@@ -40,46 +52,53 @@ client.on('ready', () => {
   setInterval(pingDB, 60000);
 });
 
+var globalMsg;
+
 client.on('message', async message => {
+  globalMsg = message;
   console.log(message.content);
   if (!message.content.startsWith(prefix) || message.author.bot) {
     if (!(message.author.id === "633350865356587008")) {
+      globalMsg = null;
       return;
     }      
   }
 
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
-  if (!client.commands.has(commandName)) return;
+  if (!client.commands.has(commandName)) {
+    globalMsg = null;
+    return;
+  }
   const command = client.commands.get(commandName);
 
   if (commandName === 'info') {
     const information = client.commands.get(args[0]);
     if (!args.length || !client.commands.has(args[0])) {
+      globalMsg = null;
       return message.channel.send('You didn\'t provide a command or the command does not exist');
-    }
-    else {
+    } else {
+      globalMsg = null;
       return message.channel.send(`\`${information.name}: ${information.description}\``); 
     }
   }
-
 
   if (command.args && !args.length) {
     let reply = 'You did not provide any arguments';
     if (command.usage) {
       reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
     }
-
+    globalMsg = null;
     return message.channel.send(reply);
   }
+
   try {
     command.execute(client, message, args, dbConn);
-  }
-  catch (error) {
+  } catch (error) {
+    globalMsg = null;
     console.error(error);
     message.reply('Internal Error');
   }
-
 });
 
 function triggerReminder(reactID, userID, dateNtime, message) {
