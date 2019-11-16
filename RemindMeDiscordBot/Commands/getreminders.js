@@ -3,11 +3,11 @@ module.exports = {
     description: 'Get your active reminders private messaged to yourself',
     args: false,
     execute(client, message, args, connection) {
-        var str = "SELECT * FROM single WHERE user_id  " + `${message.author.id}`;
+        var str = "SELECT * FROM single WHERE user_id = " + `${message.author.id}`;
         connection.query(str, function (error, results, fields) {
             if(error) {
-                message.reply("A database error has occurred. Please report the problem to the developers and what you did that caused this error." + 
-                `Error: ${error.name}\n` + `Message: ${error.message}`);
+                message.reply("A database error has occurred. Please report the problem to the developers and what you did that caused this error.\n" + 
+                `Error: ${error.name}\n`);
                 console.error("", error);
                 console.log("A database error has occured. See details above.");
                 return;
