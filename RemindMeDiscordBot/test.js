@@ -1,8 +1,7 @@
 process.on('uncaughtException', err => {
   console.error("", err);
-  globalMsg.channel.send("An uncaught exception has occurred. Please report this problem to the developers and any details about what you did that caused this error.\n" +
-    `Error: ${err.name}\n` + `Message: ${err.message}\n`);
-  globalMsg = null;
+  client.channels.get("631930424930730020").send("An uncaught exception has occurred. Please report this problem to the developers and any details about what you did that caused this error.\n" +
+    `Error: ${err.name}\n` + `Message: ${err.message}\n` + `Timestamp: ${new Date().toString()}\n`);
   console.log("An uncaught exception was detected. See details above.");
 });
 
@@ -52,14 +51,11 @@ client.on('ready', () => {
   setInterval(pingDB, 60000);
 });
 
-var globalMsg;
-
 client.on('message', async message => {
   globalMsg = message;
   console.log(message.content);
   if (!message.content.startsWith(prefix) || message.author.bot) {
     if (!(message.author.id === "633350865356587008")) {
-      globalMsg = null;
       return;
     }      
   }
@@ -67,7 +63,6 @@ client.on('message', async message => {
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
   if (!client.commands.has(commandName)) {
-    globalMsg = null;
     message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
     return;
   }
@@ -76,10 +71,8 @@ client.on('message', async message => {
   if (commandName === 'info') {
     const information = client.commands.get(args[0]);
     if (!args.length || !client.commands.has(args[0])) {
-      globalMsg = null;
       return message.channel.send('You didn\'t provide a command or the command does not exist');
     } else {
-      globalMsg = null;
       return message.channel.send(`\`${information.name}: ${information.description}\``); 
     }
   }
@@ -89,16 +82,14 @@ client.on('message', async message => {
     if (command.usage) {
       reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
     }
-    globalMsg = null;
     return message.channel.send(reply);
   }
 
   try {
     command.execute(client, message, args, dbConn);
   } catch (error) {
-    globalMsg = null;
     console.error(error);
-    message.reply('Internal Error');
+    message.reply('Internal Error. Please try again, or report the problem to the developers and what you did that caused this error.');
   }
 });
 
