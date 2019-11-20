@@ -20,7 +20,8 @@ var dbConn = mysql.createConnection({
     user: "teamclippy_rw",
     password: "tClippy!",
     database: "teamclippy",
-    port: 3307
+    port: 3307,
+    multipleStatements: true
 });
 
 dbConn.connect(err => {
@@ -101,6 +102,7 @@ function triggerReminder(reactID, userID, dateNtime, message) {
   dbConn.query(sql, function(item) {});
 }
 
+var runningTime = 0;
 function pingDB() {
   var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), '0 0:01:00.00')`;
   dbConn.query(sql, function (error, results) {
@@ -109,7 +111,7 @@ function pingDB() {
       var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
       setTimeout(triggerReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["message"]), timeRemaining);
     });
-    console.log(`${results.length} pending reminders within the next 60 seconds`);
+    console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${results.length} pending reminders within the next 60 seconds`);
   });
 }
 
