@@ -58,7 +58,8 @@ module.exports = {
         }
         else if (type == 'y')
         {
-            year = year + value;
+            today.setFullYear(year + parseInt(value));
+            year = today.getFullYear();
         }
         else 
         {
