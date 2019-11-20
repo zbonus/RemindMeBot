@@ -1,3 +1,10 @@
+process.on('uncaughtException', err => {
+  console.error("", err);
+  client.channels.get("631930424930730020").send("An uncaught exception has occurred. Please report this problem to the developers and any details about what you did that caused this error.\n" +
+    `Error: ${err.name}\n` + `Message: ${err.message}\n` + `Timestamp: ${new Date().toString()}\n`);
+  console.log("An uncaught exception was detected. See details above.");
+});
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const {prefix, token} = require("./config.json");
@@ -13,11 +20,16 @@ var dbConn = mysql.createConnection({
     user: "teamclippy_rw",
     password: "tClippy!",
     database: "teamclippy",
-    port: 3307
+    port: 3307,
+    multipleStatements: true
 });
 
 dbConn.connect(err => {
-    if (err) throw err;
+    if (err) {
+      console.error("", err);
+      console.log("There was a problem connecting to the database. The bot has terminated.");
+      process.exit(2);
+    }
 });
 
 dbConn.printQueryResults = function (sql, results) {
@@ -41,45 +53,45 @@ client.on('ready', () => {
 });
 
 client.on('message', async message => {
+  globalMsg = message;
   console.log(message.content);
   if (!message.content.startsWith(prefix) || message.author.bot) {
-    if (!(message.author.id === "633350865356587008")) {
+    if (!(message.author.id === "633350865356587008") && !message.content.startsWith(prefix)) {
       return;
     }      
   }
 
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
-  if (!client.commands.has(commandName)) return;
+  if (!client.commands.has(commandName)) {
+    //message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
+    return;
+  }
   const command = client.commands.get(commandName);
 
   if (commandName === 'info') {
     const information = client.commands.get(args[0]);
     if (!args.length || !client.commands.has(args[0])) {
       return message.channel.send('You didn\'t provide a command or the command does not exist');
-    }
-    else {
+    } else {
       return message.channel.send(`\`${information.name}: ${information.description}\``); 
     }
   }
-
 
   if (command.args && !args.length) {
     let reply = 'You did not provide any arguments';
     if (command.usage) {
       reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
     }
-
     return message.channel.send(reply);
   }
+
   try {
     command.execute(client, message, args, dbConn);
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
-    message.reply('Internal Error');
+    message.reply('Internal Error. Please try again, or report the problem to the developers and what you did that caused this error.');
   }
-
 });
 
 function triggerReminder(reactID, userID, dateNtime, message) {
@@ -90,6 +102,7 @@ function triggerReminder(reactID, userID, dateNtime, message) {
   dbConn.query(sql, function(item) {});
 }
 
+var runningTime = 0;
 function pingDB() {
   var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), '0 0:01:00.00')`;
   dbConn.query(sql, function (error, results) {
@@ -98,7 +111,7 @@ function pingDB() {
       var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
       setTimeout(triggerReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["message"]), timeRemaining);
     });
-    console.log(`${results.length} pending reminders within the next 60 seconds`);
+    console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${results.length} pending reminders within the next 60 seconds`);
   });
 }
 
