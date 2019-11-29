@@ -1,6 +1,6 @@
 module.exports = {
 
-    datetime: function(commandName, date, time, text, userID)
+    datetime: function(commandName, date, time, text, userID, channel, server, role)
     {
         // get current date and time
         var today = new Date();
@@ -33,8 +33,16 @@ module.exports = {
         
         userID = String(userID).substring(2,20);
         // prepare the mysql statement with given input for the 'single' table
-        statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
-        console.log(`datetime: statement = ${statement}`);
+        if(server == 0 && channel == 0 && role == 0) {
+            statement = `insert into single (user_id, dateNtime, message) values ('${userID}', '${dt}', '${text}');`;
+            console.log(`datetime: statement = ${statement}`);
+        }
+        else if(server != 0 && channel != 0 && role != 0) {
+            channel = String(channel).substring(2,20);
+            role = String(role).substring(3,21);
+            statement = `insert into multiple (user_id, dateNtime, channel_id, server_id, group_id, message) values ('${userID}', '${dt}', '${channel}', '${server}', '${role}', '${text}');`;
+            console.log(`datetime: statement = ${statement}`);
+        }
 
         if (dt == '')
         {

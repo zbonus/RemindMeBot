@@ -31,7 +31,14 @@ module.exports = {
 
         
         // Stores todays date information in corresponding variables
-
+        const timeRegex = /^(([2]{1}[0-3]{1}:{1})|([0-1]?[0-9]{1}:{1}))([0-5]{1}[0-9]{1})$/
+        const dateRegex = /^((1|01|3|03|5|05|7|07|8|08|10|12){1}(-|\/){1}(([1-2]{1}[0-9]{1})|(0?[1-9]{1})|(3{1}[0-1]{1}))(-|\/){1}([2-9]{1}[0-9]{1}[0-9]{1}[0-9]))|((4|04|6|06|9|09|11){1}(-|\/){1}(([1-2]{1}[0-9]{1})|(0?[1-9]{1})|(3{1}0{1}))(-|\/){1}([2-9]{1}[0-9]{1}[0-9]{1}[0-9]))|((2|02){1}(-|\/){1}(([1-2]{1}[0-9]{1})|(0?[1-9]{1})|)(-|\/){1}([2-9]{1}[0-9]{1}[0-9]{1}[0-9]))$/
+        const minRegex = /^(min|mins|m|minute|minutes)$/
+        const hourRegex = /^(h|hour|hours)$/
+        const dayRegex = /^(d|day|days)$/
+        const weekRegex = /^(w|week|weeks)$/
+        const monthRegex = /^(mo|month|months)$/
+        const yearRegex = /^(y|year|years)$/
         var today = new Date();
         var day = today.getDate();
         var month = today.getMonth() + 1;
@@ -48,19 +55,19 @@ module.exports = {
         var choice = formatting(reminder);
         var statement;
         const Discord = require('discord.js');
-
+        console.log(message.author);
         // Fancy stuff
 
         if(choice === 'time') {
             timesplit = reminder[1].split(":");
-            statement = datetime(reminder[0], 0, timesplit, msg[1], message.author);
+            statement = datetime(reminder[0], 0, timesplit, msg[1], message.author, 0, 0, 0);
             timebool = 1;
             console.log("Called time command!");
         }
 
         else if(choice === 'date') {
             datesplit = reminder[1].split("\/");
-            statement = datetime(reminder[0], datesplit, 0, msg[1], message.author);
+            statement = datetime(reminder[0], datesplit, 0, msg[1], message.author, 0, 0, 0);
             datebool = 1;
             console.log("Called date command!");
         }
@@ -68,7 +75,7 @@ module.exports = {
         else if(choice === 'both') {
             datesplit = reminder[1].split("\/");
             timesplit = reminder[2].split(":");
-            statement = datetime(reminder[0], datesplit, timesplit, msg[1], message.author);
+            statement = datetime(reminder[0], datesplit, timesplit, msg[1], message.author, 0, 0, 0);
             both = 1;
             console.log("Called both command!");
         }
