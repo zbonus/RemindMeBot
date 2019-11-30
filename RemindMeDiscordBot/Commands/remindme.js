@@ -100,7 +100,7 @@ module.exports = {
                 timetype = "y";
             }
             console.log(timetype);
-            statement = datetype(reminder[0], reminder[1], timetype, msg[1], message.author);
+            statement = datetype(reminder[0], reminder[1], timetype, msg[1], message.author, 0, 0, 0);
             valbool = 1;
             console.log("Called val command!");
         }
