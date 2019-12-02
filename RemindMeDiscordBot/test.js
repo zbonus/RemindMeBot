@@ -111,7 +111,11 @@ function pingDB() {
       Console.log("Unable to query database");
       queryTimeout++;
       if (queryTimeout == 3) {
-        Console.log("We are terminating. Check database connection.");
+        try {
+          message.channel.send("Cannot connect to database. Bot has terminated.");
+        } catch (error) {
+          Console.log("We are terminating. Check database connection.");
+        }
         process.exit(3);
       }
     } else {
