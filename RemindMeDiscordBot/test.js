@@ -103,15 +103,25 @@ function triggerReminder(reactID, userID, dateNtime, message) {
 }
 
 var runningTime = 0;
+var queryTimeout = 0;
 function pingDB() {
   var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), '0 0:01:00.00')`;
   dbConn.query(sql, function (error, results) {
-    results.forEach(function(item) {
-      console.log(item["dateNtime"].toString());
-      var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
-      setTimeout(triggerReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["message"]), timeRemaining);
-    });
-    console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${results.length} pending reminders within the next 60 seconds`);
+    if (results == undefined) {
+      Console.log("Unable to query database");
+      queryTimeout++;
+      if (queryTimeout == 3) {
+        Console.log("We are terminating. Check database connection.");
+        process.exit(3);
+      }
+    } else {
+      results.forEach(function(item) {
+        console.log(item["dateNtime"].toString());
+        var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
+        setTimeout(triggerReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["message"]), timeRemaining);
+      });
+      console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${results.length} pending reminders within the next 60 seconds`);
+    }
   });
 }
 
