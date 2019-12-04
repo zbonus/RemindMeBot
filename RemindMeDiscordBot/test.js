@@ -39,7 +39,24 @@ dbConn.printQueryResults = function (sql, results) {
     });
 };
 
-var pendingReminders = [];
+var queryTimeout = 0;
+dbConn.isQueryUndefined = function (results) {
+  if (results == undefined) {
+    Console.log("Unable to query database");
+    queryTimeout++;
+    if (queryTimeout == 3) {
+      try {
+        message.channel.send("Cannot connect to database. Bot has terminated.");
+      } catch (error) {
+        Console.log("We are terminating. Check database connection.");
+      }
+      process.exit(3);
+    }
+  } else {
+    queryTimeout = 0;
+  }
+  return results == undefined;
+};
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -64,7 +81,7 @@ client.on('message', async message => {
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
   if (!client.commands.has(commandName)) {
-    //message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
+    message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
     return;
   }
   const command = client.commands.get(commandName);
@@ -98,35 +115,51 @@ function triggerReminder(reactID, userID, dateNtime, message) {
   var user = client.users.get(userID);
   user.sendMessage(`Reminder at ${dateNtime}: ${message}`);
   var sql = `DELETE FROM single WHERE react_id = ${reactID}`;
-  console.log(sql);
   dbConn.query(sql, function(item) {});
 }
 
+function triggerGroupReminder(reactID, userID, dateNtime, channelID, serverID, roleID, message) {
+  var server = client.guilds.get(serverID);
+  var channel = server.channels.get(channelID);
+  var role = server.roles.get(roleID);
+  var membersOfRole = role.members.map(m=>m.user);
+  var membersOfChannel = channel.members.map(m=>m.user);
+
+  for (var i = 0; i < membersOfRole.length; i++) {
+    var memberOfRoleAndChannel = channel.members.get(membersOfRole[i].id);
+    if (memberOfRoleAndChannel != undefined) {
+      channel.send(`Reminder for <@&${roleID}> at ${dateNtime.toString().substring(0, 33)} from <@!${userID}>: ${message}`);
+    }
+  }
+  dbConn.query(`DELETE FROM multiple WHERE react_id = ${reactID}`, function (item) {});
+}
+
 var runningTime = 0;
-var queryTimeout = 0;
 function pingDB() {
+  var resultsFound = 0;
   var sql = `SELECT * FROM single WHERE dateNtime < ADDTIME(NOW(), '0 0:01:00.00')`;
   dbConn.query(sql, function (error, results) {
-    if (results == undefined) {
-      Console.log("Unable to query database");
-      queryTimeout++;
-      if (queryTimeout == 3) {
-        try {
-          message.channel.send("Cannot connect to database. Bot has terminated.");
-        } catch (error) {
-          Console.log("We are terminating. Check database connection.");
-        }
-        process.exit(3);
-      }
-    } else {
-      results.forEach(function(item) {
-        console.log(item["dateNtime"].toString());
+    if (!dbConn.isQueryUndefined(results)) {
+      resultsFound = results.length;
+      results.forEach(function (item) {
         var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
         setTimeout(triggerReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["message"]), timeRemaining);
       });
-      console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${results.length} pending reminders within the next 60 seconds`);
     }
   });
+
+  sql = "SELECT * FROM multiple WHERE dateNtime < ADDTIME(NOW(), '0 0:01:00.00');";
+  dbConn.query(sql, function (error, results) {
+    if (!dbConn.isQueryUndefined(results)) {
+      resultsFound += results.length;
+      results.forEach(function (item) {
+        var timeRemaining = Date.parse(item["dateNtime"].toString()) - new Date().getTime();
+        setTimeout(triggerGroupReminder.bind(this, item["react_id"], item["user_id"], item["dateNtime"].toString(), item["channel_id"], item["server_id"], item["group_id"], item["message"]), timeRemaining);
+      });
+    }
+  });
+
+  console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${resultsFound} pending reminders within the next 60 seconds`);
 }
 
 client.login(token);
