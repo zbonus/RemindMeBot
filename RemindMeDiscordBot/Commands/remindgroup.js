@@ -67,6 +67,7 @@ module.exports = {
         }
         if(choice === 'time') {
             timesplit = reminder[1].split(":");
+            console.log(timesplit);
             statement = datetime(reminder[0], 0, timesplit, msg[1], message.author, channel, serverid, role);
             timebool = 1;
             console.log("Called time command!");
@@ -82,6 +83,7 @@ module.exports = {
         else if(choice === 'both') {
             datesplit = reminder[1].split("\/");
             timesplit = reminder[2].split(":");
+            console.log(timesplit);
             statement = datetime(reminder[0], datesplit, timesplit, msg[1], message.author, channel, serverid, role);
             both = 1;
             console.log("Called both command!");
@@ -107,7 +109,7 @@ module.exports = {
                 timetype = "y";
             }
             console.log(timetype);
-            statement = datetype(reminder[0], reminder[1], timetype, msg[1], message.author);
+            statement = datetype(reminder[0], reminder[1], timetype, msg[1], message.author, channel, serverid, role);
             valbool = 1;
             console.log("Called val command!");
         }
@@ -120,7 +122,7 @@ module.exports = {
         else if(choice === 'timeerr') {
             message.channel.send("Improper Time given!");
             message.channel.send("Make sure that your time entered is after the current time if no date is given!");
-            message.channel.send("For example the current time for me is:\`" + hour + ':' + minute + "\` is not valid by itself, but is valid if a date is given later than today's date.");
+            message.channel.send("For example the current time for me is:\`" + hour + ':' + String(minute).padStart(2, '0') + "\` is not valid by itself, but is valid if a date is given later than today's date.");
         }
         else if (choice === 'dateerr') {
             message.channel.send("Improper date given!");

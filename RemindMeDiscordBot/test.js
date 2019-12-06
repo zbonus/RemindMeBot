@@ -64,7 +64,7 @@ client.on('message', async message => {
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
   if (!client.commands.has(commandName)) {
-    //message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
+    message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
     return;
   }
   const command = client.commands.get(commandName);

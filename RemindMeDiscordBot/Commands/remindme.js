@@ -113,7 +113,7 @@ module.exports = {
         else if(choice === 'timeerr') {
             message.channel.send("Improper Time given!");
             message.channel.send("Make sure that your time entered is after the current time if no date is given!");
-            message.channel.send("For example the current time for me is:\`" + hour + ':' + minute + "\` is not valid by itself, but is valid if a date is given later than today's date.");
+            message.channel.send("For example the current time for me is:\`" + hour + ':' + String(minute).padStart(2, '0') + "\` is not valid by itself, but is valid if a date is given later than today's date.");
         }
         else if (choice === 'dateerr') {
             message.channel.send("Improper date given!");
@@ -124,12 +124,12 @@ module.exports = {
             message.channel.send("Improper format!");
             message.channel.send("Make sure the time comes AFTER the date!");
         }
-
+        const exampleEmbed = new Discord.RichEmbed()
         if(both == 1) {
             console.log("Adding both")
             console.log(timesplit);
             console.log(datesplit);
-            const exampleEmbed = new Discord.RichEmbed()
+            exampleEmbed
                 .setColor('#0099ff')
                 .setTitle("Reminder created!")
                 .setAuthor(message.author.username + "'s reminder", message.author.avatarURL)
@@ -137,7 +137,7 @@ module.exports = {
                 .setDescription(msg[1])
                 .addField("Date:", datesplit[0] + '/' + datesplit[1] + '/' + datesplit[2], true)
                 .addField("Time:", timesplit[0] + ':' + String(timesplit[1]).padStart(2, '0'), true);
-            message.channel.send(exampleEmbed);    
+            message.channel.send(exampleEmbed);
             dbConn.query(statement, function (error) {
                 if(error) {
                     console.log(error);
@@ -147,7 +147,7 @@ module.exports = {
             })
         }
         else if(datebool == 1 || timebool == 1) {
-            const exampleEmbed = new Discord.RichEmbed()
+            exampleEmbed
                 .setColor('#0099ff')
                 .setTitle("Reminder created!")
                 .setAuthor(message.author.username + "'s reminder", message.author.avatarURL)
@@ -164,7 +164,6 @@ module.exports = {
                 exampleEmbed.addField("Time:", reminder[1], true);
             }
             message.channel.send(exampleEmbed);
-            
             dbConn.query(statement, function (error) {
                 if(error) {
                     console.log(error);
@@ -176,7 +175,7 @@ module.exports = {
         else if(valbool == 1) {
             console.log("Adding val");
             var nextday = new Date();
-            const exampleEmbed = new Discord.RichEmbed()
+            exampleEmbed
                 .setColor('#0099ff')
                 .setTitle("Reminder created!")
                 .setAuthor(message.author.username + "'s reminder", message.author.avatarURL)
@@ -233,7 +232,9 @@ module.exports = {
                 exampleEmbed.addField("Date:", month + '/' + day + '/' + year, true);
                 exampleEmbed.addField("Time:", hour + ':' + String(minute).padStart(2, '0'), true);
             }
-            message.channel.send(exampleEmbed);
+            message.channel.send(exampleEmbed).then(async msg => {
+                await msg.react('✅');
+            });
             dbConn.query(statement, function (error) {
                 if(error) {
                     console.log(error);
@@ -242,5 +243,36 @@ module.exports = {
                 }
         })
         }
+        
+        // await promptMessage(exampleEmbed, message.author, 3600, '✅');
+
+        // async function promptMessage(message, author, time, reaction) {
+        //     time = time*1000;
+        //     const filter = (reaction, user) => reaction.includes(reaction.emoji.name) && user.id != author.id;
+        //     return message.awaitReactions(filter, {max: 10000, time: time}).then(collected => collected.first() && collected.first().emoji.name());
+        // }
+        // client.on('messageReactionAdd', (reaction, user) => {
+        //     if(reaction.emoji.name === '✅') {
+        //         if(choice === "time") {
+        //             statement = datetime(reminder[0], 0, timesplit, msg[1], reaction.users, 0, 0, 0);
+        //         }
+        //         if(choice === "date") {
+        //             statement = datetime(reminder[0], datesplit, 0, msg[1], reaction.users, 0, 0, 0);
+        //         }
+        //         if(choice === "both") {
+        //             statement = datetime(reminder[0], datesplit, timesplit, msg[1], reaction.users, 0, 0, 0);
+        //         }
+        //         if(choice === "val") {
+        //             statement = datetype(reminder[0], reminder[1], timetype, msg[1], reaction.users, 0, 0, 0);
+        //         }
+        //         dbConn.query(statement, function (error) {
+        //             if(error) {
+        //                 console.log(error);
+        //                 message.reply("Database error")
+        //                 return;
+        //             }
+        //         })
+        //     }
+        // })
     }
 }
