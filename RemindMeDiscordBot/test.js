@@ -125,7 +125,7 @@ function triggerReminder(reactID, userID, dateNtime, message) {
   dbConn.query(sql, function(item) {});
 }
 
-// event handler to send the reminder to the channel with the tagged role at the set time
+//event handler to send the reminder to the channel with the tagged role at the set time
 function triggerGroupReminder(reactID, userID, dateNtime, channelID, serverID, roleID, message) {
   client.guilds.get(serverID).channels.get(channelID).send(`Reminder for <@&${roleID}> at ${dateNtime.toString().substring(0, 33)} from <@!${userID}>: ${message}`);
   dbConn.query(`DELETE FROM multiple WHERE react_id = ${reactID}; DELETE FROM id WHERE react_id = ${reactID};`, function (item) {});
@@ -155,6 +155,7 @@ function pingDB() {
     }
   });
 
+  // cuts out the timezone from the Date string
   console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${resultsFound} pending reminders within the next 60 seconds`);
 }
 
