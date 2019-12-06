@@ -32,6 +32,7 @@ dbConn.connect(err => {
     }
 });
 
+//prints out the reuslts of a database query
 dbConn.printQueryResults = function (sql, results) {
     console.log(sql);
     results.forEach(function (item) {
@@ -40,6 +41,7 @@ dbConn.printQueryResults = function (sql, results) {
 };
 
 var queryTimeout = 0;
+// terminates the bot if it cannot successfully query the database three consecutive times
 dbConn.isQueryUndefined = function (results) {
   if (results == undefined) {
     Console.log("Unable to query database");
@@ -63,6 +65,7 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
+// sets the interval to ping the database for pending reminders every minute
 client.on('ready', () => {
   console.log('Logged in');
   pingDB();
@@ -111,27 +114,18 @@ client.on('message', async message => {
   }
 });
 
+// event handler to send the reminder to the user at the set time
 function triggerReminder(reactID, userID, dateNtime, message) {
   var user = client.users.get(userID);
   user.sendMessage(`Reminder at ${dateNtime}: ${message}`);
-  var sql = `DELETE FROM single WHERE react_id = ${reactID}`;
+  var sql = `DELETE FROM single WHERE react_id = ${reactID}; DELETE FROM id WHERE react_id = ${reactID};`;
   dbConn.query(sql, function(item) {});
 }
 
+// event handler to send the reminder to the channel with the tagged role at the set time
 function triggerGroupReminder(reactID, userID, dateNtime, channelID, serverID, roleID, message) {
-  var server = client.guilds.get(serverID);
-  var channel = server.channels.get(channelID);
-  var role = server.roles.get(roleID);
-  var membersOfRole = role.members.map(m=>m.user);
-  var membersOfChannel = channel.members.map(m=>m.user);
-
-  for (var i = 0; i < membersOfRole.length; i++) {
-    var memberOfRoleAndChannel = channel.members.get(membersOfRole[i].id);
-    if (memberOfRoleAndChannel != undefined) {
-      channel.send(`Reminder for <@&${roleID}> at ${dateNtime.toString().substring(0, 33)} from <@!${userID}>: ${message}`);
-    }
-  }
-  dbConn.query(`DELETE FROM multiple WHERE react_id = ${reactID}`, function (item) {});
+  client.guilds.get(serverID).channels.get(channelID).send(`Reminder for <@&${roleID}> at ${dateNtime.toString().substring(0, 33)} from <@!${userID}>: ${message}`);
+  dbConn.query(`DELETE FROM multiple WHERE react_id = ${reactID}; DELETE FROM id WHERE react_id = ${reactID};`, function (item) {});
 }
 
 var runningTime = 0;
