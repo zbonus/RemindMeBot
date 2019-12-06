@@ -7,12 +7,18 @@ For the TABLE "single":
 	
 	DELIMITER //
 
-	CREATE TRIGGER before_update_single BEFORE INSERT ON single FOR EACH ROW
+	CREATE TRIGGER before_insert_single BEFORE INSERT ON single FOR EACH ROW
 	BEGIN
 		DECLARE rID int;
 		INSERT INTO id(user_id) VALUES(NEW.user_id);
 		SELECT LAST_INSERT_ID() INTO rID;
 		SET NEW.react_id = rID;
+		INSERT INTO history VALUES(rID, NEW.user_id, NEW.dateNtime, NEW.message, 'single', NOW(), 'inserted', NULL, NULL, NULL);
+	END;//
+	
+	CREATE TRIGGER before_delete_single BEFORE DELETE ON single FOR EACH ROW
+	BEGIN
+		INSERT INTO history VALUES(OLD.react_id, OLD.user_id, OLD.dateNtime, OLD.message, 'single', NOW(), 'deleted', NULL, NULL, NULL);
 	END;//
 
 For the TABLE "multiple":
@@ -21,10 +27,19 @@ For the TABLE "multiple":
 	
 	DELIMITER //
 
-	CREATE TRIGGER before_update_multiple BEFORE INSERT ON multiple FOR EACH ROW
+CREATE TRIGGER before_insert_multiple BEFORE INSERT ON multiple FOR EACH ROW
+BEGIN
+	DECLARE rID int;
+	INSERT INTO id(user_id) VALUES(NEW.user_id);
+	SELECT LAST_INSERT_ID() INTO rID;
+	SET NEW.react_id = rID;
+	INSERT INTO history VALUES(rID, NEW.user_id, NEW.dateNtime, NEW.message, 'single', NOW(), 'inserted', NEW.channel_id, NEW.server_id, NEW.group_id);
+END;//
+	
+	CREATE TRIGGER before_delete_multiple BEFORE DELETE ON multiple FOR EACH ROW
 	BEGIN
-		DECLARE rID int;
-		INSERT INTO id(user_id) VALUES(NEW.user_id);
-		SELECT LAST_INSERT_ID() INTO rID;
-		SET NEW.react_id = rID;
+		INSERT INTO history VALUES(OLD.react_id, OLD.user_id, OLD.dateNtime, OLD.message, 'multiple', NOW(), 'deleted', OLD.channel_id, OLD.server_id, OLD.group_id);
 	END;//
+	
+For the TABLE "history":
+	CREATE TABLE history(react_id INT, user_id VARCHAR(18), timestampOfReminder datetime, message VARCHAR(100), tableName ENUM('single', 'multiple'), dateModified DATETIME, action ENUM('inserted', 'deleted'), channel_id VARCHAR(18), server_id VARCHAR(18), group_id VARCHAR(18));
