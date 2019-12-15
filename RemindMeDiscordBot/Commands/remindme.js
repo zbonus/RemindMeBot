@@ -232,8 +232,44 @@ module.exports = {
                 exampleEmbed.addField("Date:", month + '/' + day + '/' + year, true);
                 exampleEmbed.addField("Time:", hour + ':' + String(minute).padStart(2, '0'), true);
             }
+            const filter = (reaction, user) => ['✅'].includes(reaction.emoji.name);
             message.channel.send(exampleEmbed).then(async msg => {
                 await msg.react('✅');
+                console.log("Made it past reaction");
+                msg.awaitReactions(filter, {
+                    max: 100000,
+                    time: 5000,
+                    errors: ['time']
+                }).then(collected => {
+                    const reaction = collected.first();
+                    console.log("In collection");
+                    if(reaction.emoji.name === '✅') {
+                        if(choice === "time") {
+                            statement = datetime(reminder[0], 0, timesplit, msg[1], reaction.users, 0, 0, 0);
+                        }
+                        if(choice === "date") {
+                            statement = datetime(reminder[0], datesplit, 0, msg[1], reaction.users, 0, 0, 0);
+                        }
+                        if(choice === "both") {
+                            statement = datetime(reminder[0], datesplit, timesplit, msg[1], reaction.users, 0, 0, 0);
+                        }
+                        if(choice === "val") {
+                            statement = datetype(reminder[0], reminder[1], timetype, msg[1], reaction.users, 0, 0, 0);
+                        }
+                        dbConn.query(statement, function (error) {
+                            if(error) {
+                                console.log(error);
+                                message.reply("Database error")
+                                return;
+                            }
+                            else {
+                                message.channel.send(`Successfully added ${reaction.users}`);
+                            }
+                        })
+                    }
+                }).catch(collected => {
+                    return message.channel.send(error);
+                })
             });
             dbConn.query(statement, function (error) {
                 if(error) {
@@ -248,7 +284,6 @@ module.exports = {
 
         // async function promptMessage(message, author, time, reaction) {
         //     time = time*1000;
-        //     const filter = (reaction, user) => reaction.includes(reaction.emoji.name) && user.id != author.id;
         //     return message.awaitReactions(filter, {max: 10000, time: time}).then(collected => collected.first() && collected.first().emoji.name());
         // }
         // client.on('messageReactionAdd', (reaction, user) => {
@@ -270,6 +305,9 @@ module.exports = {
         //                 console.log(error);
         //                 message.reply("Database error")
         //                 return;
+        //             }
+        //             else {
+        //                 message.channel.send(`Successfully added ${reaction.users}`);
         //             }
         //         })
         //     }
