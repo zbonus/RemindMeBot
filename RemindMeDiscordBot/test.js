@@ -88,7 +88,7 @@ client.on('message', async message => {
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
   if (!client.commands.has(commandName)) {
-    message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
+    if (!message.author.id === "633350865356587008") message.channel.send(`Invalid command. Please type \`${prefix}help\` for a list of valid commands.`);
     return;
   }
   const command = client.commands.get(commandName);
@@ -125,7 +125,7 @@ function triggerReminder(reactID, userID, dateNtime, message) {
   dbConn.query(sql, function(item) {});
 }
 
-// event handler to send the reminder to the channel with the tagged role at the set time
+//event handler to send the reminder to the channel with the tagged role at the set time
 function triggerGroupReminder(reactID, userID, dateNtime, channelID, serverID, roleID, message) {
   client.guilds.get(serverID).channels.get(channelID).send(`Reminder for <@&${roleID}> at ${dateNtime.toString().substring(0, 33)} from <@!${userID}>: ${message}`);
   dbConn.query(`DELETE FROM multiple WHERE react_id = ${reactID}; DELETE FROM id WHERE react_id = ${reactID};`, function (item) {});
@@ -155,6 +155,7 @@ function pingDB() {
     }
   });
 
+  // cuts out the timezone from the Date string
   console.log(`${new Date().toString().substring(0, 24)} ${runningTime++}: ${resultsFound} pending reminders within the next 60 seconds`);
 }
 
